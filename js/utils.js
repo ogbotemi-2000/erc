@@ -22,51 +22,24 @@
       }
       return node
     }
-   };
+   }, cLs=bool=>bool?'add':'remove';
   Abbr.dict(['childNodes', 'classList', 'parentNode', 'previousElementSibling', 'nextElementSibling', 'nextSibling', 'firstChild', 'firstElementChild', 'lastChild', 'lastElementChild']);
 
-(function() {  
-  function detectInconsistentEval() {
-    let length = eval.toString().length;
-    let userAgent = navigator.userAgent.toLowerCase();
-    let browser;
+/*self contained component*/
+function grow_shrink(e,i,c,n,d,k, cls){
+  d=grow_shrink,n={500:'base',640:'sm',768:'md',1024:'lg',1280:'xl'},
+  c=document.createElement("div"),
+  !d.cached&&(d.cached={}),!d.arr&&(d.arr=[].slice.call((d.el=window.growShrink).querySelectorAll(".fluid"))),
+  !d.dump&&(d.dump=d.el.querySelector("a+div>div")),
+  (e=(k=Object.keys(n).filter((c,n)=>(i=n,c>e)))[0]), k = new RegExp(k.map(e=>n[e]+':show').join('|')),
+  d.vw!==e&&!d.cached[d.vw=e]&&d.arr.forEach((n,r,o)=>{
+    (n=n.cloneNode(!0)).classList.add(c.className=d.el.getAttribute('data-classname'));
+    if(((cls=n.classList)+'').match(k)) cls.remove('clicked'), (cls+'').replace(/(base|sm|md|lg|xl):show/, function(a) {
+      cls.remove(a, 'fluid')
+    }), /* n.className=l?"clicked":"",*/ c.appendChild(n), !d.cached[e]&&(d.cached[e]=c)
+  }),d.dump.replaceChild(d.cached[e]||c,d.dump.firstChild)}
 
-    if (userAgent.indexOf("edg/") !== -1) {
-      browser = "edge";
-    } else if (
-      userAgent.indexOf("trident") !== -1 ||
-      userAgent.indexOf("msie") !== -1
-    ) {
-      browser = "internet_explorer";
-    } else if (userAgent.indexOf("firefox") !== -1) {
-      browser = "firefox";
-    } else if (
-      userAgent.indexOf("opera") !== -1 ||
-      userAgent.indexOf("opr") !== -1
-    ) {
-      browser = "opera";
-    } else if (userAgent.indexOf("chrome") !== -1) {
-      browser = "chrome";
-    } else if (userAgent.indexOf("safari") !== -1) {
-      browser = "safari";
-    } else {
-      browser = "unknown";
-    }
+window.addEventListener('DOMContentLoaded', _=>{
+  window.growShrink&&(grow_shrink(innerWidth), this.onresize=_=>grow_shrink(innerWidth))
+});
 
-    if (browser === "unknown") return false;
-
-    return (
-      (length === 33 && !["chrome", "opera", "edge"].includes(browser)) ||
-      (length === 37 && !["firefox", "safari"].includes(browser)) ||
-      (length === 39 && !["internet_explorer"].includes(browser))
-    );
-  }
-  function byUserAgent(ev, axes) {
-    if(navigator.userAgent.includes("Headless") || !navigator.languages.length || navigator.webdriver|| document.$cdc_asdjflasutopfhvcZLmcfl_|| detectInconsistentEval()) return;
-    /*events like click can't be so precisely fired by a human as to have the coordinates of the point clicked to be at the top right i.e 0. 0*/
-    axes = ['clientX', 'clientY', 'pageX', 'pageY', 'screenX', 'screenY', 'x', 'y'].map(e=>ev[e]).filter(e=>e);
-    /*bots powered by selenium may fool browsers by making dispatched events seem user-prompted hence why isTrusted comes second*/
-    return !!(axes.length||ev.isTrusted||ev.detail)
-  }
-  window.byUserAgent = byUserAgent
-})()
