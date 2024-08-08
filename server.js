@@ -1,6 +1,6 @@
 /** Left hand-written server code here for now upon remembering that Vercel is serverless 🤦‍♂️ */
 
-`let http   = require('http'),
+let http   = require('http'),
     fs 	   = require('fs'),
     path   = require('path'),
     config = require('./config.json'),
